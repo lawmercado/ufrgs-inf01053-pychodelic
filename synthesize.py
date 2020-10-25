@@ -9,8 +9,8 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument("sheet", type=str, help="Path for the sheet music containing instructions for the synthesizer.")
-parser.add_argument("type", type=str, help="Type of the main waveform of the synthesizer to use: " + str(available_synthesizers))
-parser.add_argument("output", type=str, help="Main waveform of the synthesizer to use: " + str(available_synthesizers))
+parser.add_argument("type", type=str, help="Type of the main waveform of the synthesizer to use: %s." % str(available_synthesizers))
+parser.add_argument("output", type=str, help="Where to save the composition.")
 
 args = parser.parse_args()
 

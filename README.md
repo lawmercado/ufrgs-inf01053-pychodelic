@@ -21,8 +21,8 @@ Synthesize a given sheet music (in txt format)
 
 positional arguments:
   sheet       Path for the sheet music containing instructions for the synthesizer.
-  type        Type of the main waveform of the synthesizer to use: ['square', 'sawtooth']
-  output      Main waveform of the synthesizer to use: ['square', 'sawtooth']
+  type        Type of the main waveform of the synthesizer to use: ['square', 'sawtooth'].
+  output      Where to save the composition.
 
 optional arguments:
   -h, --help  show this help message and exit
