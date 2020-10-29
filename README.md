@@ -7,7 +7,7 @@ A Python implementation of a vocoder with a (really basic) audio synthesis modul
 
 - Install [synthesizer](https://github.com/yuma-m/synthesizer)
 - Install [librosa](https://librosa.org/doc/latest/install.html)
-
+- Install [matplotlib](https://matplotlib.org/)
 
 
 ## Audio synthesis

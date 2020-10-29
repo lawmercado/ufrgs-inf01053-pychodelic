@@ -4,6 +4,7 @@ import numpy as np
 import soundfile as sf
 
 from pychodelic.vocoder import vocode
+from pychodelic.vocoder import savefig
 
 parser = argparse.ArgumentParser(
     description="Modulates a carrier with a given modulator (i.e. creates a vocoder effect)."
@@ -28,5 +29,7 @@ if len(carrier) != len(modulator):
     carrier = np.hstack((carrier, carrier[0:len(modulator) - len(carrier)]))
 
 wave = vocode(modulator, carrier, args.sampling_rate, args.window_size, args.window_overlap_size)
+
+savefig(args.output+'.png', [modulator, carrier, wave])
 
 sf.write(args.output, wave, args.sampling_rate)
