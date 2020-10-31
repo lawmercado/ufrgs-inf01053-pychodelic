@@ -31,6 +31,7 @@ parser.add_argument("output", type=str, help="Path where to save the resulting a
 parser.add_argument("--sampling_rate", type=int, help="Sampling rate to use when dealing with modulator and carrier audio files.", default=44100)
 parser.add_argument("--window_size", type=int, help="Window size to consider in the STFT.", default=2048)
 parser.add_argument("--window_overlap_size", type=int, help="Window overlap size to consider in the STFT.", default=1024)
+parser.add_argument("--bands", type=int, help="Number of frequency bands.", default=1024)
 parser.add_argument("--plot", help="Wheter the waves should be plotted.", default=False, action="store_true")
 
 args = parser.parse_args()
@@ -45,7 +46,7 @@ while len(carrier) < len(modulator):
 
 carrier = carrier[0:len(modulator)]
 
-wave = vocode(modulator, carrier, args.sampling_rate, args.window_size, args.window_overlap_size)
+wave = vocode(modulator, carrier, args.sampling_rate, args.window_size, args.window_overlap_size, args.bands)
 
 sf.write(args.output, wave, args.sampling_rate)
 
