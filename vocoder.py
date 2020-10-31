@@ -1,10 +1,23 @@
 import argparse
 import librosa
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
 
 from pychodelic.vocoder import vocode
-from pychodelic.vocoder import savefig
+
+def savefig(filename, figlist, log=True):
+    n = len(figlist)
+
+    plt.figure()
+    for i, f in enumerate(figlist):
+        plt.subplot(n, 1, i+1)
+        if len(f.shape) == 1:
+            plt.plot(f)
+            plt.xlim([0, len(f)])
+            
+    plt.savefig(filename)
 
 parser = argparse.ArgumentParser(
     description="Modulates a carrier with a given modulator (i.e. creates a vocoder effect)."
@@ -22,14 +35,15 @@ args = parser.parse_args()
 modulator, _ = librosa.load(args.modulator, sr=args.sampling_rate, mono=True)
 carrier, _ = librosa.load(args.carrier, sr=args.sampling_rate, mono=True)
 
-carrier = carrier[0:len(modulator)]
-
 # In case the modulator is longer than the carrier audio, loop it
-if len(carrier) != len(modulator):
-    carrier = np.hstack((carrier, carrier[0:len(modulator) - len(carrier)]))
+while len(carrier) < len(modulator):
+    carrier = np.hstack((carrier, carrier))
+
+carrier = carrier[0:len(modulator)]
 
 wave = vocode(modulator, carrier, args.sampling_rate, args.window_size, args.window_overlap_size)
 
-savefig(args.output+'.png', [modulator, carrier, wave])
+matplotlib.use("Agg")
+savefig(args.output + ".png", [modulator, carrier, wave])
 
 sf.write(args.output, wave, args.sampling_rate)
