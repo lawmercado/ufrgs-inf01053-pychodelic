@@ -10,13 +10,17 @@ def vocode(modulator: np.ndarray, carrier: np.ndarray, sampling_rate: int, windo
         for t in range(0, len(m_t)):
             # Gets the magnitude of the frequency band f at time t
             mod = np.abs(m_Zxx[f, t])
+            car = np.sqrt(np.sum(np.abs(carrier[int(m_t[t] * sampling_rate) : int(m_t[t] * sampling_rate) + window_size] ** 2)) / sampling_rate)
+            
+            if car == 0:
+                car = 0.0001
 
             # Amplifies the same frequency band at time t in the carrier
-            c_Zxx[f, t] = c_Zxx[f, t] * mod
+            c_Zxx[f, t] = c_Zxx[f, t] * mod / car
 
     _, wave = istft(c_Zxx, fs=sampling_rate, nperseg=window_size, noverlap=window_overlap_size)
 
     # Normalizes the audio
-    wave = wave * (1.0/np.max(wave))
+    wave = wave/np.sqrt(np.sum(np.abs(wave ** 2)) / sampling_rate)
 
     return wave

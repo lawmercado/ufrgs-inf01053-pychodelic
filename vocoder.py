@@ -36,6 +36,7 @@ parser.add_argument("--plot", help="Wheter the waves should be plotted.", defaul
 args = parser.parse_args()
 
 modulator, _ = librosa.load(args.modulator, sr=args.sampling_rate, mono=True)
+sf.write(args.modulator, modulator, args.sampling_rate)
 carrier, _ = librosa.load(args.carrier, sr=args.sampling_rate, mono=True)
 
 # In case the modulator is longer than the carrier audio, loop it
