@@ -1,0 +1,9 @@
+samples/carrier/hide_and_seek.wav filter=lfs diff=lfs merge=lfs -text
+samples/carrier/let_it_happen.wav filter=lfs diff=lfs merge=lfs -text
+samples/carrier/sawtooth.wav filter=lfs diff=lfs merge=lfs -text
+samples/carrier/square.wav filter=lfs diff=lfs merge=lfs -text
+samples/modulator/let_it_happen.wav filter=lfs diff=lfs merge=lfs -text
+samples/modulator/maconha.wav filter=lfs diff=lfs merge=lfs -text
+samples/modulator/oi_frigo.wav filter=lfs diff=lfs merge=lfs -text
+samples/modulator/beatbox.wav filter=lfs diff=lfs merge=lfs -text
+samples/modulator/hide_and_seek.wav filter=lfs diff=lfs merge=lfs -text
