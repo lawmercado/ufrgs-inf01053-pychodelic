@@ -1,7 +1,6 @@
 from scipy.signal import stft, istft, butter, filtfilt
 
 import numpy as np
-import math
 
 def butter_low_pass_filter(data, cutoff, fs, order):
     nyq = fs * 0.5
@@ -10,43 +9,55 @@ def butter_low_pass_filter(data, cutoff, fs, order):
     y = filtfilt(b, a, data)
     return y
 
-def vocode(modulator: np.ndarray, carrier: np.ndarray, sampling_rate: int, window_size: int, window_overlap_size: int, bands: int) -> np.ndarray:
+def vocode(modulator: np.ndarray, carrier: np.ndarray, sampling_rate: int, volume: float, num_bands: int, window_size: int, window_overlap_size: int) -> np.ndarray:
     m_f, m_t, m_Zxx = stft(modulator, fs=sampling_rate, nperseg=window_size, noverlap=window_overlap_size)
     c_f, c_t, c_Zxx = stft(carrier, fs=sampling_rate, nperseg=window_size, noverlap=window_overlap_size)
 
-    n_freq_per_band = math.floor(len(m_f)/bands) 
+    if num_bands > (window_size / 2):
+        raise ValueError("The number of bands should not be greater than the half of the window size.")
 
-    for b in range(0, bands):
-        freq_sum = 0
+    if num_bands > 0:
+        num_freq_per_band = np.int(np.floor(len(m_f)/num_bands))
 
         for t in range(0, len(m_t)):
-            sum = 0
+            for b in range(0, num_bands):
+                mod = 0
 
-            for f in range(b*n_freq_per_band, (b+1)*n_freq_per_band):
-                # Gets the magnitude of the frequency f at time t
-                mod = np.abs(m_Zxx[f, t])
-                sum += mod
-
-            # Gets the average magnitude of the frequency f 
-            avg = sum/n_freq_per_band
-
-            for f in range(b*n_freq_per_band, (b+1)*n_freq_per_band):
-                mod = np.abs(m_Zxx[f, t])
-                car = np.sqrt(np.sum(np.abs(carrier[int(m_t[t] * sampling_rate) : int(m_t[t] * sampling_rate) + window_size] ** 2)) / sampling_rate)
+                for f in range(b * num_freq_per_band, (b+1) * num_freq_per_band):
+                    # Gets the magnitude of the frequency f at time t
+                    mod += np.abs(m_Zxx[f, t])
                 
+                # Computes the average magnitude
+                mod = mod / num_freq_per_band
+
+                # Computes normalization factor with respect to the carrier
+                car = np.sqrt(np.sum(np.abs(carrier[int(m_t[t] * sampling_rate) : int(m_t[t] * sampling_rate) + window_size] ** 2)) / sampling_rate)
+
                 if car == 0:
                     car = 0.0001
 
-                # Amplifies the same frequency band at time t in the carrier
-                c_Zxx[f, t] = c_Zxx[f, t] * avg / car
+                for f in range(b * num_freq_per_band, (b+1) * num_freq_per_band):
+                    # Amplifies the same frequency band at time t in the carrier
+                    c_Zxx[f, t] = c_Zxx[f, t] * mod / car
 
-        # TODO: apply low pass filter on each frequency band
-        # cutoff = freq_sum/n_freq_per_band
-        # c_Zxx[b*n_freq_per_band: (b+1)*n_freq_per_band] = butter_low_pass_filter(c_Zxx[b*n_freq_per_band: (b+1)*n_freq_per_band], cutoff, sampling_rate, 2)
+    else:
+        for f in range(0, len(m_f)):
+            for t in range(0, len(m_t)):
+                # Gets the magnitude of the frequency f at time t
+                mod = np.abs(m_Zxx[f, t])
+
+                # Computes normalization factor with respect to the carrier
+                car = np.sqrt(np.sum(np.abs(carrier[int(m_t[t] * sampling_rate) : int(m_t[t] * sampling_rate) + window_size] ** 2)) / sampling_rate)
+
+                if car == 0:
+                    car = 0.0001
+
+                # Amplifies the same frequency f at time t in the carrier
+                c_Zxx[f, t] = c_Zxx[f, t] * mod/car
 
     _, wave = istft(c_Zxx, fs=sampling_rate, nperseg=window_size, noverlap=window_overlap_size)
 
     # Normalizes the audio
     wave = wave/np.sqrt(np.sum(np.abs(wave ** 2)) / sampling_rate)
 
-    return wave
+    return volume * wave
