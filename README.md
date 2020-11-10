@@ -47,7 +47,7 @@ If you pass this file to the *synthesize.py* utility, it will generate a wavefor
 To apply the vocoder effect for a given carrier and modulator audio files, simply run *vocoder.py*. You can use pre-recorded/synthesized audio files that are under the folder samples.
 
 ```python
-usage: vocoder.py [-h] [--sampling_rate SAMPLING_RATE] [--window_size WINDOW_SIZE] [--window_overlap_size WINDOW_OVERLAP_SIZE] modulator carrier output
+usage: vocoder.py [-h] [--sampling_rate SAMPLING_RATE] [--volume VOLUME] [--num_bands NUM_BANDS] [--window_size WINDOW_SIZE] [--window_overlap_size WINDOW_OVERLAP_SIZE] [--plot PLOT] modulator carrier output
 
 Modulates a carrier with a given modulator (i.e. creates a vocoder effect).
 
@@ -60,8 +60,14 @@ optional arguments:
   -h, --help            show this help message and exit
   --sampling_rate SAMPLING_RATE
                         Sampling rate to use when dealing with modulator and carrier audio files.
+  --volume VOLUME
+                        Volume for the resulting wave. Less than 1 will decrease the volume and greater than one will increase it.
+  --num_bands NUM_BANDS
+                        Number of frequency bands. Use -1 for no band restriction.
   --window_size WINDOW_SIZE
                         Window size to consider in the STFT.
   --window_overlap_size WINDOW_OVERLAP_SIZE
                         Window overlap size to consider in the STFT.
+  --plot PLOT
+                        Wheter the waves should be plotted.
 ```
